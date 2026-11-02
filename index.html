@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKYFALL: Tactical Airstrike & Modern Warfare System (v5.0)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        tactical: {
+                            bg: '#0a0c10',
+                            surface: '#121620',
+                            border: '#1e2638',
+                            hover: '#1a2234',
+                            accent: '#00ffcc',
+                            blue: '#3b82f6',
+                            muted: '#94a3b8',
+                            light: '#f8fafc'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Fira Code', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome for tactical icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* Custom scrollbar and sleek visual polish */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0c10;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e2638;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b82f6;
+        }
+        .glow-accent {
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.15);
+        }
+        .glow-blue {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
+        }
+        .glass-panel {
+            background: rgba(18, 22, 32, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .code-block {
+            background: #07090d;
+            border: 1px solid #1e2638;
+        }
+        .table-custom th {
+            background: #161c2b;
+            color: #00ffcc;
+        }
+        .table-custom tr:nth-child(even) {
+            background: rgba(18, 22, 32, 0.4);
+        }
+        .table-custom tr:hover {
+            background: rgba(26, 34, 52, 0.7);
+        }
+    </style>
+</head>
+<body class="bg-tactical-bg text-tactical-light font-sans antialiased selection:bg-tactical-accent selection:text-black">
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-tactical-border px-4 lg:px-8 h-16 flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+            <!-- Mobile Sidebar Toggle -->
+            <button id="sidebarToggle" class="lg:hidden text-tactical-muted hover:text-tactical-accent p-2 rounded-lg transition" aria-label="Toggle Sidebar">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+            <a href="#top" class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-lg bg-tactical-accent/10 border border-tactical-accent/30 flex items-center justify-center text-tactical-accent font-bold text-xl glow-accent">
+                    <i class="fa-solid fa-jet-fighter"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-lg tracking-wider text-tactical-light flex items-center gap-2">
+                        SKYFALL Airstrike R <span class="text-xs px-2 py-0.5 rounded bg-tactical-accent/20 text-tactical-accent border border-tactical-accent/30 font-mono">1.5.0</span>
+                    </h1>
+                    <p class="text-xs text-tactical-muted hidden sm:block">Tactical Airstrike & Modern Warfare System</p>
+                </div>
+            </a>
+        </div>
+
+        <!-- Search Bar in Header -->
+        <div class="flex-1 max-w-md mx-4 hidden md:block">
+            <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-tactical-muted">
+                    <i class="fa-solid fa-search"></i>
+                </span>
+                <input type="text" id="liveSearch" placeholder="Search weapons, items, commands, sections... (Press '/' to focus)" 
+                    class="w-full pl-10 pr-4 py-2 bg-tactical-surface border border-tactical-border rounded-lg text-sm text-tactical-light placeholder-tactical-muted focus:outline-none focus:border-tactical-accent transition">
+            </div>
+        </div>
+
+        <!-- Quick Actions & Version info -->
+        <div class="flex items-center space-x-3">
+            <div class="hidden xl:flex items-center space-x-2 text-xs text-tactical-muted font-mono bg-tactical-surface px-3 py-1.5 rounded-lg border border-tactical-border">
+                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                <span>MC 1.20.1 • Forge 47.2.0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Layout Container -->
+    <div class="flex min-h-[calc(100vh-4rem)]">
+        
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-80 bg-tactical-surface border-r border-tactical-border transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col pt-20 lg:pt-6 overflow-y-auto">
+            <div class="px-6 pb-4 lg:hidden">
+                <!-- Mobile Search -->
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-tactical-muted">
+                        <i class="fa-solid fa-search"></i>
+                    </span>
+                    <input type="text" id="mobileLiveSearch" placeholder="Search documentation..." 
+                        class="w-full pl-10 pr-4 py-2 bg-tactical-bg border border-tactical-border rounded-lg text-sm text-tactical-light placeholder-tactical-muted focus:outline-none focus:border-tactical-accent">
+                </div>
+            </div>
+
+            <div class="px-6 mb-3 text-xs font-bold uppercase tracking-wider text-tactical-muted">
+                Documentation Sections
+            </div>
+
+            <nav class="space-y-1 px-3 pb-24 text-sm font-medium" id="sidebarNav">
+                <a href="#section-1" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-tactical-muted hover:text-tactical-light hover:bg-tactical-hover transition">
+                    <span class="font-mono text-xs text-tactical-accent w-5">01</span>
+                    <span class="truncate">Mod Overview & Version History</span>
+                </a>
+                <a href="#section-2" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-tactical-muted hover:text-tactical-light hover:bg-tactical-hover transition">
+                    <span class="font-mono text-xs text-tactical-accent w-5">02</span>
+                    <span class="truncate">Quick-Start Installation</span>
+                </a>
+                <a href="#section-3" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-tactical-muted hover:text-tactical-light hover:bg-tactical-hover transition">
+                    <span class="font-mono text-xs text-tactical-accent w-5">03</span>
+                    <span class="truncate">Controls & Keybindings Reference</span>
+                </a>
+                <a href="#section-4" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-tactical-muted hover:text-tactical-light hover:bg-tactical-hover transition">
+                    <span class="font-mono text-xs text-tactical-accent w-5">04</span>
+                    <span class="truncate">Tactical Firearms & Heavy Launchers</span>
+                </a>
+                <a href="#section-5" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-tactical-muted hover:text-tactical-light hover:bg-tactical-hover transition">
+                    <span class="font-mono text-xs text-tactical-accent w-5">05</span>
+                    <span class="truncate">Live-Camera Guided Missiles & Drones</span>
+                </a>
+                <a href="#section-6" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-tactical-muted hover:text-tactical-light hover:bg-tactical-hover transition">
+                    <span class="font-mono text-xs text-tactical-accent w-5">06</span>
+                    <span class="truncate">Target Designators & Orbital Superweapons</span>
+                </a>
+                <a href="#section-7" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-tactical-muted hover:text-tactical-light hover:bg-tactical-hover transition">
+                    <span class="font-mono text-xs text-tactical-accent w-5">07</span>
+                    <span class="truncate">Automated Turrets, Radar & Silos</span>
+                </a>
+                <a href="#section-8" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-tactical-muted hover:text-tactical-light hover:bg-tactical-hover transition">
+                    <span class="font-mono text-xs text-tactical-accent w-5">08</span>
+                    <span class="truncate">Ground Robotics, Juggernaut & NVG</span>
+                </a>
+                <a href="#section-9" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-tactical-muted hover:text-tactical-light hover:bg-tactical-hover transition">
+                    <span class="font-mono text-xs text-tactical-accent w-5">09</span>
+                    <span class="truncate">Holographic War Table & Killstreaks</span>
+                </a>
+                <a href="#section-10" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-tactical-muted hover:text-tactical-light hover:bg-tactical-hover transition">
+                    <span class="font-mono text-xs text-tactical-accent w-5">10</span>
+                    <span class="truncate">Destruction, Craters & Shellshock</span>
+                </a>
+                <a href="#section-11" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-tactical-muted hover:text-tactical-light hover:bg-tactical-hover transition">
+                    <span class="font-mono text-xs text-tactical-accent w-5">11</span>
+                    <span class="truncate">Studio Audio System & Explosions</span>
+                </a>
+                <a href="#section-12" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-tactical-muted hover:text-tactical-light hover:bg-tactical-hover transition">
+                    <span class="font-mono text-xs text-tactical-accent w-5">12</span>
+                    <span class="truncate">How to Disable Settings Tutorial</span>
+                </a>
+                <a href="#section-13" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-tactical-muted hover:text-tactical-light hover:bg-tactical-hover transition">
+                    <span class="font-mono text-xs text-tactical-accent w-5">13</span>
+                    <span class="truncate">Admin Commands & Presets</span>
+                </a>
+                <a href="#section-14" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-tactical-muted hover:text-tactical-light hover:bg-tactical-hover transition">
+                    <span class="font-mono text-xs text-tactical-accent w-5">14</span>
+                    <span class="truncate">Complete Registry Reference</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Backdrop for mobile drawer -->
+        <div id="sidebarBackdrop" class="fixed inset-0 bg-black/60 z-30 hidden lg:hidden backdrop-blur-sm"></div>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 lg:pl-80 p-6 lg:p-12 max-w-6xl mx-auto space-y-16" id="top">
+
+            <!-- Hero Banner -->
+            <div class="relative rounded-2xl bg-gradient-to-br from-tactical-surface via-[#121620] to-[#0d121c] border border-tactical-border p-8 lg:p-12 overflow-hidden shadow-2xl">
+                <div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none text-9xl text-tactical-accent">
+                    <i class="fa-solid fa-crosshairs"></i>
+                </div>
+                <div class="relative z-10 space-y-4 max-w-3xl">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-tactical-accent/10 border border-tactical-accent/30 text-tactical-accent text-xs font-mono font-medium">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>Minecraft Java Edition 1.20.1 • Forge 47.2.0 • Java 17</span>
+                    </div>
+                    <h1 class="text-4xl lg:text-5xl font-extrabold tracking-tight text-white">
+                        SKYFALL Airstrike R <span class="text-tactical-accent font-light">1.5.0</span>
+                    </h1>
+                    <p class="text-tactical-muted text-base lg:text-lg leading-relaxed">
+                        Transform Minecraft into a full-scale Call of Duty: Modern Warfare / Warzone tactical sandbox. Deploy precision airstrikes, TV-guided missiles, automated defense turrets, ground robotics, and heavy ordinance with state-of-the-art studio audio and destruction physics.
+                    </p>
+                    <div class="flex flex-wrap gap-4 pt-2">
+                        <a href="#section-2" class="px-6 py-3 bg-tactical-accent hover:bg-tactical-accent/80 text-black font-bold rounded-xl transition flex items-center gap-2 shadow-lg glow-accent">
+                            <i class="fa-solid fa-rocket"></i>
+                            <span>Quick Installation</span>
+                        </a>
+                        <a href="#section-14" class="px-6 py-3 bg-tactical-surface hover:bg-tactical-hover border border-tactical-border text-tactical-light font-semibold rounded-xl transition flex items-center gap-2">
+                            <i class="fa-solid fa-book"></i>
+                            <span>Registry Index (36 Items)</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 1 -->
+            <section id="section-1" class="space-y-6 scroll-mt-24">
+                <div class="border-b border-tactical-border pb-4">
+                    <span class="text-xs font-mono text-tactical-accent font-bold tracking-wider uppercase">Section 01</span>
+                    <h2 class="text-2xl lg:text-3xl font-bold text-white mt-1">Mod Overview & Version History (v1.0 – v5.0)</h2>
+                </div>
+                <p class="text-tactical-muted leading-relaxed">
+                    <strong>SKYFALL</strong> is a comprehensive tactical warfare modification built for Minecraft 1.20.1 Forge. Every system from the initial v1.0 release through the v5.0 Master Edition is integrated into a high-performance codebase:
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-5 rounded-xl bg-tactical-surface border border-tactical-border space-y-2">
+                        <div class="flex items-center gap-2 text-tactical-accent font-semibold">
+                            <i class="fa-solid fa-clock-rotate-left"></i>
+                            <span>v1.0 – v3.0 Core & Audio Engine</span>
+                        </div>
+                        <p class="text-sm text-tactical-muted">Precision airstrikes, F-35 fighter jets, B-2 carpet bombers, nuclear warheads, custom 3D .glb weapons, real ballistics, studio mp3/ogg audio with 4-way random explosions, and 200+ FPS optimized inventory rendering.</p>
+                    </div>
+                    <div class="p-5 rounded-xl bg-tactical-surface border border-tactical-border space-y-2">
+                        <div class="flex items-center gap-2 text-tactical-blue font-semibold">
+                            <i class="fa-solid fa-bolt"></i>
+                            <span>v4.0 – v5.0 Master Edition</span>
+                        </div>
+                        <p class="text-sm text-tactical-muted">Live-camera TV-guided UAVs & AC-130 gunships, Wheelson UGV tank drones, Juggernaut EOD exosuits, underground missile silos (Mk-41 VLS), "Rods from God" kinetic orbital strikes, 3D flying debris, and holographic war table.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2 -->
+            <section id="section-2" class="space-y-6 scroll-mt-24">
+                <div class="border-b border-tactical-border pb-4">
+                    <span class="text-xs font-mono text-tactical-accent font-bold tracking-wider uppercase">Section 02</span>
+                    <h2 class="text-2xl lg:text-3xl font-bold text-white mt-1">Quick-Start Build & Installation Tutorial</h2>
+                </div>
+                <p class="text-tactical-muted leading-relaxed">
+                    Follow these simple steps to install and run SKYFALL on your Minecraft client or server. No complex gradle setup required for players—just download the .jar, put it in your Minecraft mods folder, and launch Forge 1.20.1!
+                </p>
+                
+                <div class="space-y-4">
+                    <div class="p-5 rounded-xl bg-tactical-surface border border-tactical-border space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold text-white flex items-center gap-2">
+                                <span class="w-6 h-6 rounded-full bg-tactical-accent/20 text-tactical-accent flex items-center justify-center text-xs font-mono">1</span>
+                                Compile the `.jar` (Developers / Source Build)
+                            </h3>
+                            <button class="copy-btn text-xs px-2.5 py-1.5 bg-tactical-bg hover:bg-tactical-hover border border-tactical-border rounded text-tactical-muted hover:text-white transition flex items-center gap-1.5" data-clipboard-target="#buildCmd">
+                                <i class="fa-regular fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <p class="text-sm text-tactical-muted">Extract the mod source archive, open PowerShell or Terminal in the root folder, and execute the Gradle build command:</p>
+                        <div class="code-block p-4 rounded-lg font-mono text-sm text-tactical-accent overflow-x-auto">
+                            <code id="buildCmd">.\gradlew.bat build</code>
+                        </div>
+                        <p class="text-xs text-tactical-muted"><em>Note: gradlew automatically detects Java and uses cached portable JDK 17 if needed so you never encounter class version errors.</em></p>
+                    </div>
+
+                    <div class="p-5 rounded-xl bg-tactical-surface border border-tactical-border space-y-3">
+                        <h3 class="font-semibold text-white flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-tactical-accent/20 text-tactical-accent flex items-center justify-center text-xs font-mono">2</span>
+                            Standard Player Installation
+                        </h3>
+                        <p class="text-sm text-tactical-muted">
+                            Simply download the compiled <code class="text-tactical-accent font-mono bg-tactical-bg px-1.5 py-0.5 rounded">skyfall-1.0.0.jar</code> file and place it directly into your <code class="text-tactical-accent font-mono bg-tactical-bg px-1.5 py-0.5 rounded">.minecraft/mods</code> folder, then launch Forge 1.20.1.
+                        </p>
+                        <div class="p-3 bg-tactical-bg rounded-lg border border-tactical-border text-xs text-tactical-light flex items-center gap-3">
+                            <i class="fa-solid fa-triangle-exclamation text-yellow-500 text-base"></i>
+                            <span>Requires <strong>Minecraft 1.20.1</strong> with <strong>Forge 47.2.0+</strong> and <strong>Java 17</strong> installed.</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3 -->
+            <section id="section-3" class="space-y-6 scroll-mt-24">
+                <div class="border-b border-tactical-border pb-4">
+                    <span class="text-xs font-mono text-tactical-accent font-bold tracking-wider uppercase">Section 03</span>
+                    <h2 class="text-2xl lg:text-3xl font-bold text-white mt-1">Complete Controls & Keybindings Reference</h2>
+                </div>
+                <p class="text-tactical-muted leading-relaxed">
+                    Custom keybindings can be configured in <strong>Options → Controls → Keybinds → SKYFALL Tactical Airstrike System</strong>:
+                </p>
+                <div class="overflow-x-auto rounded-xl border border-tactical-border">
+                    <table class="w-full text-left border-collapse table-custom text-sm">
+                        <thead>
+                            <tr>
+                                <th class="p-3.5 font-semibold">Control / Action</th>
+                                <th class="p-3.5 font-semibold">Default Key</th>
+                                <th class="p-3.5 font-semibold">Description</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-tactical-border text-tactical-muted">
+                            <tr>
+                                <td class="p-3.5 font-medium text-white">Fire Weapon / Call Strike</td>
+                                <td class="p-3.5 font-mono text-tactical-accent">Right-Click</td>
+                                <td class="p-3.5">Fires weapons, designates airstrikes, or fires payload inside live-camera drones.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3.5 font-medium text-white">Aim Down Sights (ADS)</td>
+                                <td class="p-3.5 font-mono text-tactical-accent">Sneak (Shift) + Right-Click</td>
+                                <td class="p-3.5">Aligns 3D iron sights/optics. In AC-130, cycles 105mm → 40mm → 25mm weapons.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3.5 font-medium text-white">Reload Firearm / Launcher</td>
+                                <td class="p-3.5 font-mono text-tactical-accent">R</td>
+                                <td class="p-3.5">Reloads active weapon from inventory matching ammo.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3.5 font-medium text-white">Cycle Strike / Vision Mode</td>
+                                <td class="p-3.5 font-mono text-tactical-accent">M / V</td>
+                                <td class="p-3.5">Cycles laser designator strike types (M) or FLIR/NVG camera vision modes (V).</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3.5 font-medium text-white">Toggle Night Vision Goggles</td>
+                                <td class="p-3.5 font-mono text-tactical-accent">N</td>
+                                <td class="p-3.5">Toggles full-screen military green phosphor NVG amplification + scanlines.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3.5 font-medium text-white">Toggle Radar & Settings GUI</td>
+                                <td class="p-3.5 font-mono text-tactical-accent">H / K</td>
+                                <td class="p-3.5">Toggles HUD radar (H) or opens the SKYFALL tactical configuration screen (K).</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3.5 font-medium text-white">Steer Guided Missile / Drone</td>
+                                <td class="p-3.5 font-mono text-tactical-accent">Mouse Movement</td>
+                                <td class="p-3.5">Directly steers pitch & yaw of Predator, FPV, Reaper, AC-130, and Wheelson UGV.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3.5 font-medium text-white">Drive Wheelson Tank Drone</td>
+                                <td class="p-3.5 font-mono text-tactical-accent">W A S D + Mouse</td>
+                                <td class="p-3.5">Drives Wheelson UGV across terrain; Shift + Right-Click toggles AI Guard Mode.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3.5 font-medium text-white">Exit Live Camera Early</td>
+                                <td class="p-3.5 font-mono text-tactical-accent">Left Shift (Sneak)</td>
+                                <td class="p-3.5">Safely disconnects from any live camera feed back to player body.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- SECTION 4 -->
+            <section id="section-4" class="space-y-6 scroll-mt-24">
+                <div class="border-b border-tactical-border pb-4">
+                    <span class="text-xs font-mono text-tactical-accent font-bold tracking-wider uppercase">Section 04</span>
+                    <h2 class="text-2xl lg:text-3xl font-bold text-white mt-1">Category 1: Tactical Firearms & Heavy Launchers (8 3D Weapons)</h2>
+                </div>
+                <p class="text-tactical-muted leading-relaxed">
+                    Custom 3D `.s3d` vertex buffer renderer models with ADS alignment, muzzle flash lighting, recoil kick, and `256x256` 3D icon rendering for 200+ FPS:
+                </p>
+                <div class="overflow-x-auto rounded-xl border border-tactical-border">
+                    <table class="w-full text-left border-collapse table-custom text-sm">
+                        <thead>
+                            <tr>
+                                <th class="p-3.5 font-semibold">Weapon Name</th>
+                                <th class="p-3.5 font-semibold">Registry ID</th>
+                                <th class="p-3.5 font-semibold">Ammo ID</th>
+                                <th class="p-3.5 font-semibold">Mag</th>
+                                <th class="p-3.5 font-semibold">Fire Rate / Ballistics</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-tactical-border text-tactical-muted">
+                            <tr>
+                                <td class="p-3.5 font-medium text-white">Tactical SMG <span class="text-xs text-tactical-accent">(.glb)</span></td>
+                                <td class="p-3.5 font-mono text-xs text-tactical-accent">skyfall:tactical_smg</td>
+                                <td class="p-3.5 font-mono text-xs">skyfall:smg_ammo</td>
+                                <td class="p-3.5">35</td>
+                                <td class="p-3.5">2 ticks (600 RPM Auto) • 7.0 HP per round</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3.5 font-medium text-white">Cyberpunk Pistol <span class="text-xs text-tactical-accent">(.glb)</span></td>
+                                <td class="p-3.5 font-mono text-xs text-tactical-accent">skyfall:tactical_pistol</td>
+                                <td class="p-3.5 font-mono text-xs">skyfall:pistol_ammo</td>
+                                <td class="p-3.5">15</td>
+                                <td class="p-3.5">5 ticks (Semi-Auto) • 9.5 HP high-caliber sidearm</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3.5 font-medium text-white">M4A1 Carbine</td>
+                                <td class="p-3.5 font-mono text-xs text-tactical-accent">skyfall:m4a1_rifle</td>
+                                <td class="p-3.5 font-mono text-xs">skyfall:rifle_ammo</td>
+                                <td class="p-3.5">30</td>
+                                <td class="p-3.5">3 ticks (400 RPM Auto) • 10.5 HP 5.56mm NATO</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3.5 font-medium text-white">Barrett M82 .50 Cal</td>
+                                <td class="p-3.5 font-mono text-xs text-tactical-accent">skyfall:barrett_sniper</td>
+                                <td class="p-3.5 font-mono text-xs">skyfall:sniper_ammo</td>
+                                <td class="p-3.5">10</td>
+                                <td class="p-3.5">22 ticks (Heavy Semi) • 42.0 HP hitscan rail-trail</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3.5 font-medium text-white">M134 6-Barrel Minigun</td>
+                                <td class="p-3.5 font-mono text-xs text-tactical-accent">skyfall:m134_minigun</td>
+                                <td class="p-3.5 font-mono text-xs">skyfall:minigun_ammo</td>
+                                <td class="p-3.5">200</td>
+                                <td class="p-3.5">1 tick (1,200 RPM) • 6.5 HP suppressive stream</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3.5 font-medium text-white">RPG-7 HD Launcher <span class="text-xs text-tactical-accent">(.glb)</span></td>
+                                <td class="p-3.5 font-mono text-xs text-tactical-accent">skyfall:rpg_launcher</td>
+                                <td class="p-3.5 font-mono text-xs">skyfall:rocket_ammo</td>
+                                <td class="p-3.5">1</td>
+                                <td class="p-3.5">35 ticks reload • Radius 4.5 HEAT rocket blast</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3.5 font-medium text-white">FGM-148 Javelin <span class="text-xs text-tactical-accent">(.glb)</span></td>
+                                <td class="p-3.5 font-mono text-xs text-tactical-accent">skyfall:javelin_launcher</td>
+                                <td class="p-3.5 font-mono text-xs">skyfall:javelin_ammo</td>
+                                <td class="p-3.5">1</td>
+                                <td class="p-3.5">45 ticks lock • Climbs to Y+45, dives 90° (Radius 6.0)</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3.5 font-medium text-white">M202 Quad Launcher <span class="text-xs text-tactical-accent">(.glb)</span></td>
+                                <td class="p-3.5 font-mono text-xs text-tactical-accent">skyfall:quad_launcher</td>
+                                <td class="p-3.5 font-mono text-xs">skyfall:quad_rocket_ammo</td>
+                                <td class="p-3.5">4</td>
+                                <td class="p-3.5">8 ticks per tube • Thermobaric incendiary salvo</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- SECTION 5 -->
+            <section id="section-5" class="space-y-6 scroll-mt-24">
+                <div class="border-b border-tactical-border pb-4">
+                    <span class="text-xs font-mono text-tactical-accent font-bold tracking-wider uppercase">Section 05</span>
+                    <h2 class="text-2xl lg:text-3xl font-bold text-white mt-1">Category 2: Live-Camera Guided Missiles, Drones & Gunships</h2>
+                </div>
+                <p class="text-tactical-muted leading-relaxed">
+                    Right-clicking launches these vehicles and transfers your screen into live first-person onboard optics with crosshairs, telemetry, and thermal modes (`V` key):
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-5 rounded-xl bg-tactical-surface border border-tactical-border space-y-2">
+                        <h3 class="font-semibold text-white">1. Predator TV-Guided Cruise Missile (<code class="text-tactical-accent text-xs">skyfall:guided_missile_item</code>)</h3>
+                        <p class="text-sm text-tactical-muted">Spawns 45 blocks above diving downwards. Steer with mouse. Hold Right-Click for afterburner boost (2.65 blocks/tick). Press V for FLIR.</p>
+                    </div>
+                    <div class="p-5 rounded-xl bg-tactical-surface border border-tactical-border space-y-2">
+                        <h3 class="font-semibold text-white">2. FPV Kamikaze Loitering Drone (<code class="text-tactical-accent text-xs">skyfall:fpv_drone_item</code>)</h3>
+                        <p class="text-sm text-tactical-muted">Full 360° mouse flight control (1.15 blocks/tick, or 1.85 boosted). Perfect for navigating windows and tunnels before detonating on impact.</p>
+                    </div>
+                    <div class="p-5 rounded-xl bg-tactical-surface border border-tactical-border space-y-2">
+                        <h3 class="font-semibold text-white">3. MQ-9 Reaper Armed UAV (<code class="text-tactical-accent text-xs">skyfall:reaper_drone_item</code>)</h3>
+                        <p class="text-sm text-tactical-muted">Orbits overhead for 1,200 ticks (60s). Left/Right-Click fires AGM-114 Hellfire laser-guided missiles (15-tick cooldown) directly from the camera.</p>
+                    </div>
+                    <div class="p-5 rounded-xl bg-tactical-surface border border-tactical-border space-y-2">
+                        <h3 class="font-semibold text-white">4. AC-130J Ghostrider Gunship (<code class="text-tactical-accent text-xs">skyfall:ac130_remote</code>)</h3>
+                        <p class="text-sm text-tactical-muted">Orbits at Y+65 for 70s. Shift + Right-Click cycles weapons: 105mm Howitzer (Radius 7.5), 40mm Bofors (Radius 3.5), and 25mm Gatling (Radius 1.8).</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 6 -->
+            <section id="section-6" class="space-y-6 scroll-mt-24">
+                <div class="border-b border-tactical-border pb-4">
+                    <span class="text-xs font-mono text-tactical-accent font-bold tracking-wider uppercase">Section 06</span>
+                    <h2 class="text-2xl lg:text-3xl font-bold text-white mt-1">Category 3: Tactical Target Designators & Orbital Superweapons</h2>
+                </div>
+                <p class="text-tactical-muted leading-relaxed">
+                    Aim at any block up to 250 blocks away and Right-Click to designate targets:
+                </p>
+                <div class="overflow-x-auto rounded-xl border border-tactical-border">
+                    <table class="w-full text-left border-collapse table-custom text-sm">
+                        <thead>
+                            <tr>
+                                <th class="p-3.5 font-semibold">Superweapon / Designator</th>
+                                <th class="p-3.5 font-semibold">Registry ID</th>
+                                <th class="p-3.5 font-semibold">Payload & Behavior</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-tactical-border text-tactical-muted">
+                            <tr>
+                                <td class="p-3.5 font-medium text-white">AN/PEQ-18 Laser Designator</td>
+                                <td class="p-3.5 font-mono text-xs text-tactical-accent">skyfall:laser_designator</td>
+                                <td class="p-3.5">Multi-mode binoculars (M to cycle). Calls Precision, Carpet, Napalm, Cluster, Bunker Buster, Orbital Laser, EMP, or Nuke.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3.5 font-medium text-white">IR Smoke Marker Grenade</td>
+                                <td class="p-3.5 font-mono text-xs text-tactical-accent">skyfall:smoke_marker_grenade</td>
+                                <td class="p-3.5">Thrown grenade that pops red IR smoke and calls a 3-missile tactical strike after 3 seconds.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3.5 font-medium text-white">F-35 Wingman Beacon</td>
+                                <td class="p-3.5 font-mono text-xs text-tactical-accent">skyfall:f35_strike_beacon</td>
+                                <td class="p-3.5">Summons supersonic 3D F-35 with sonic boom vapor cones dropping JDAM bombs + 25mm strafe.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3.5 font-medium text-white">B-2A Stealth Bomber <span class="text-xs text-tactical-accent">(v5.0)</span></td>
+                                <td class="p-3.5 font-mono text-xs text-tactical-accent">skyfall:b2_stealth_bomber_item</td>
+                                <td class="p-3.5">Summons 3-ship V-formation of flying-wing stealth bombers dropping 24 heavy carpet bombs across 60 blocks.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3.5 font-medium text-white">"Rods from God" Orbital Strike <span class="text-xs text-tactical-accent">(v5.0)</span></td>
+                                <td class="p-3.5 font-mono text-xs text-tactical-accent">skyfall:rods_from_god_item</td>
+                                <td class="p-3.5">Drops Mach-10 tungsten rod from Y+220. Drills 18-block deep vertical shaft through bunkers before seismic shock.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3.5 font-medium text-white">Orbital Ion Cannon Beacon</td>
+                                <td class="p-3.5 font-mono text-xs text-tactical-accent">skyfall:orbital_laser_beacon</td>
+                                <td class="p-3.5">Calls continuous satellite laser beam scorching target zone for 7 seconds culminating in plasma blast.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3.5 font-medium text-white">B61 Tactical Nuclear Detonator</td>
+                                <td class="p-3.5 font-mono text-xs text-tactical-accent">skyfall:tactical_nuke_remote</td>
+                                <td class="p-3.5">Global siren, thermonuclear drop, blinding flash, mushroom cloud, shockwave ring, and radiation zone.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3.5 font-medium text-white">High-Altitude EMP Detonator</td>
+                                <td class="p-3.5 font-mono text-xs text-tactical-accent">skyfall:emp_strike_remote</td>
+                                <td class="p-3.5">Disables enemy electronics, destroys airborne drones/missiles, applies HUD static, freezes mobs.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3.5 font-medium text-white">Tactical C4 & Clacker</td>
+                                <td class="p-3.5 font-mono text-xs text-tactical-accent">skyfall:c4_explosive_item</td>
+                                <td class="p-3.5">Place sticky charges on walls/vehicles, then Right-Click C4 Detonator (<code class="text-tactical-accent text-xs">skyfall:c4_detonator</code>) to detonate simultaneously.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- SECTION 7 -->
+            <section id="section-7" class="space-y-6 scroll-mt-24">
+                <div class="border-b border-tactical-border pb-4">
+                    <span class="text-xs font-mono text-tactical-accent font-bold tracking-wider uppercase">Section 07</span>
+                    <h2 class="text-2xl lg:text-3xl font-bold text-white mt-1">Category 4: Automated Defense Turrets, Radar & Underground Silos</h2>
+                </div>
+                <p class="text-tactical-muted leading-relaxed">
+                    Deployable military base hardware (Right-Click on ground to place):
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-5 rounded-xl bg-tactical-surface border border-tactical-border space-y-2">
+                        <h3 class="font-semibold text-white">1. Phalanx CIWS 20mm Anti-Air Turret (<code class="text-tactical-accent text-xs">skyfall:ciws_turret_item</code>)</h3>
+                        <p class="text-sm text-tactical-muted">Scans 64-block hemisphere for incoming enemy missiles, bombs, drones, and monsters. Intercepts projectiles in mid-air with 6-barrel Vulcan rotary tracer stream.</p>
+                    </div>
+                    <div class="p-5 rounded-xl bg-tactical-surface border border-tactical-border space-y-2">
+                        <h3 class="font-semibold text-white">2. MIM-104 Patriot SAM Battery (<code class="text-tactical-accent text-xs">skyfall:sam_site_item</code>)</h3>
+                        <p class="text-sm text-tactical-muted">Heavy surface-to-air missile launcher that locks onto high-altitude aircraft (F-35, B-2 Stealth, AC-130) and hostile mobs within 96 blocks, firing homing interceptors.</p>
+                    </div>
+                    <div class="p-5 rounded-xl bg-tactical-surface border border-tactical-border space-y-2">
+                        <h3 class="font-semibold text-white">3. Mk-41 VLS Underground Missile Silo (<code class="text-tactical-accent text-xs">skyfall:vls_silo_item</code>) <span class="text-xs text-tactical-accent">(v5.0)</span></h3>
+                        <p class="text-sm text-tactical-muted">Recessed bunker. Automatically launches vertical boost-phase cruise missiles whenever you call any airstrike within 128 blocks! Blast doors animate open automatically.</p>
+                    </div>
+                    <div class="p-5 rounded-xl bg-tactical-surface border border-tactical-border space-y-2">
+                        <h3 class="font-semibold text-white">4. AN/APR-39 Radar Warning Receiver (<code class="text-tactical-accent text-xs">skyfall:radar_receiver_item</code>)</h3>
+                        <p class="text-sm text-tactical-muted">Keep in inventory or hotbar to activate live incoming-threat telemetry on your HUD, displaying distance, bearing, and lock warnings.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 8 -->
+            <section id="section-8" class="space-y-6 scroll-mt-24">
+                <div class="border-b border-tactical-border pb-4">
+                    <span class="text-xs font-mono text-tactical-accent font-bold tracking-wider uppercase">Section 08</span>
+                    <h2 class="text-2xl lg:text-3xl font-bold text-white mt-1">Category 5: Ground Robotics, Juggernaut Exosuit & NVG Gear</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-5 rounded-xl bg-tactical-surface border border-tactical-border space-y-2">
+                        <h3 class="font-semibold text-white">1. Wheelson UGV Armored Tank Drone (<code class="text-tactical-accent text-xs">skyfall:wheelson_item</code>) <span class="text-xs text-tactical-accent">(v5.0)</span></h3>
+                        <p class="text-sm text-tactical-muted">6-wheeled armored UGV with micro-grenade turret. Drive with W/A/S/D and mouse camera, or Shift + Right-Click to toggle Autonomous AI Guard Mode.</p>
+                    </div>
+                    <div class="p-5 rounded-xl bg-tactical-surface border border-tactical-border space-y-2">
+                        <h3 class="font-semibold text-white">2. Juggernaut Bomb-Suit Exosuit Crate (<code class="text-tactical-accent text-xs">skyfall:juggernaut_suit_item</code>) <span class="text-xs text-tactical-accent">(v5.0)</span></h3>
+                        <p class="text-sm text-tactical-muted">Grants +20 Armor HP, Resistance III (60% blast damage reduction), Fire Resistance, armored visor HUD, and a free M134 Minigun + 200 ammo.</p>
+                    </div>
+                    <div class="p-5 rounded-xl bg-tactical-surface border border-tactical-border space-y-2">
+                        <h3 class="font-semibold text-white">3. GPNVG-18 Panoramic NVG (<code class="text-tactical-accent text-xs">skyfall:nvg_goggles</code>)</h3>
+                        <p class="text-sm text-tactical-muted">Equip in helmet slot or press N at any time to toggle military green phosphor night vision amplification plus CRT scanlines.</p>
+                    </div>
+                    <div class="p-5 rounded-xl bg-tactical-surface border border-tactical-border space-y-2">
+                        <h3 class="font-semibold text-white">4. Tactical Supply Drop Flare (<code class="text-tactical-accent text-xs">skyfall:supply_drop_flare</code>)</h3>
+                        <p class="text-sm text-tactical-muted">Calls high-altitude C-130 cargo drop parachuting down a military crate stocked with ammo magazines, cruise missiles, and tactical gear.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 9 -->
+            <section id="section-9" class="space-y-6 scroll-mt-24">
+                <div class="border-b border-tactical-border pb-4">
+                    <span class="text-xs font-mono text-tactical-accent font-bold tracking-wider uppercase">Section 09</span>
+                    <h2 class="text-2xl lg:text-3xl font-bold text-white mt-1">Category 6: Holographic War Table & Automatic Killstreak System</h2>
+                </div>
+                <div class="space-y-4">
+                    <div class="p-5 rounded-xl bg-tactical-surface border border-tactical-border space-y-2">
+                        <h3 class="font-semibold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-map text-tactical-accent"></i>
+                            Holographic 3D War Table Command Terminal (<code class="text-tactical-accent text-xs">skyfall:war_table_item</code>) <span class="text-xs text-tactical-accent">(v5.0)</span>
+                        </h3>
+                        <p class="text-sm text-tactical-muted">
+                            Right-Click to open the interactive top-down tactical command screen. Displays a live rotating radar sweep with topographic grid lines, compass headings, and distance rings. Choose strike payloads (Precision, B-2 Carpet, Rods from God, Napalm, EMP, Nuke), adjust radar range (100m to 1,000m), and click any world coordinates to launch strikes instantly!
+                        </p>
+                    </div>
+                    <div class="p-5 rounded-xl bg-tactical-surface border border-tactical-border space-y-2">
+                        <h3 class="font-semibold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-skull text-tactical-accent"></i>
+                            Automatic Call of Duty Killstreak Progression <span class="text-xs text-tactical-accent">(v5.0)</span>
+                        </h3>
+                        <p class="text-sm text-tactical-muted">Eliminate mobs or players without dying to earn automatic inventory ordnance callouts:</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-2 text-xs">
+                            <div class="p-3 bg-tactical-bg rounded border border-tactical-border"><strong>3 Kills:</strong> Recon UAV & IR Smoke Markers</div>
+                            <div class="p-3 bg-tactical-bg rounded border border-tactical-border"><strong>5 Kills:</strong> Predator TV-Guided Cruise Missile</div>
+                            <div class="p-3 bg-tactical-bg rounded border border-tactical-border"><strong>8 Kills:</strong> Wheelson UGV Tank Drone</div>
+                            <div class="p-3 bg-tactical-bg rounded border border-tactical-border"><strong>12 Kills:</strong> B-2A Spirit Stealth Bomber Wing</div>
+                            <div class="p-3 bg-tactical-bg rounded border border-tactical-border"><strong>15 Kills:</strong> Juggernaut Exosuit & AC-130 Gunship</div>
+                            <div class="p-3 bg-tactical-bg rounded border border-tactical-border"><strong>25 Kills:</strong> Tactical Nuke & Rods from God</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 10 -->
+            <section id="section-10" class="space-y-6 scroll-mt-24">
+                <div class="border-b border-tactical-border pb-4">
+                    <span class="text-xs font-mono text-tactical-accent font-bold tracking-wider uppercase">Section 10</span>
+                    <h2 class="text-2xl lg:text-3xl font-bold text-white mt-1">Category 7: Battlefield Destruction, Craters, Debris & Shellshock</h2>
+                </div>
+                <p class="text-tactical-muted leading-relaxed">
+                    Every explosion processed by <code class="text-tactical-accent font-mono text-sm">ExplosionEngine.java</code> executes a multi-stage physical simulation:
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="p-5 rounded-xl bg-tactical-surface border border-tactical-border space-y-2">
+                        <div class="text-tactical-accent font-semibold flex items-center gap-2">
+                            <i class="fa-solid fa-meteor"></i>
+                            <span>Scorched Craters</span>
+                        </div>
+                        <p class="text-sm text-tactical-muted">Transforms crater rims into charred <strong>Blackstone, Basalt, Cobblestone, and glowing Magma Block veins</strong>.</p>
+                    </div>
+                    <div class="p-5 rounded-xl bg-tactical-surface border border-tactical-border space-y-2">
+                        <div class="text-tactical-accent font-semibold flex items-center gap-2">
+                            <i class="fa-solid fa-cube"></i>
+                            <span>3D Flying Debris</span>
+                        </div>
+                        <p class="text-sm text-tactical-muted">Blasts hurl up to 18 chunks of shattered masonry and scorched earth into the air on ballistic arcs (<code class="text-tactical-accent text-xs">FallingBlockEntity</code>).</p>
+                    </div>
+                    <div class="p-5 rounded-xl bg-tactical-surface border border-tactical-border space-y-2">
+                        <div class="text-tactical-accent font-semibold flex items-center gap-2">
+                            <i class="fa-solid fa-ear-deaf"></i>
+                            <span>Shellshock Vignette</span>
+                        </div>
+                        <p class="text-sm text-tactical-muted">Close blasts trigger crimson blood-edge vignettes, ear-ringing audio suppression, and camera trauma.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 11 -->
+            <section id="section-11" class="space-y-6 scroll-mt-24">
+                <div class="border-b border-tactical-border pb-4">
+                    <span class="text-xs font-mono text-tactical-accent font-bold tracking-wider uppercase">Section 11</span>
+                    <h2 class="text-2xl lg:text-3xl font-bold text-white mt-1">Category 8: Studio Audio System & 4-Way Random Explosions</h2>
+                </div>
+                <p class="text-tactical-muted leading-relaxed">
+                    Engineered in 44.1 kHz 16-bit Mono Ogg Vorbis:
+                </p>
+                <div class="p-5 rounded-xl bg-tactical-surface border border-tactical-border space-y-3">
+                    <h3 class="font-semibold text-white">4-Way Randomized Impact Explosions</h3>
+                    <p class="text-sm text-tactical-muted">
+                        Every explosion (<code class="text-tactical-accent text-xs">skyfall:explosion_generic</code>, <code class="text-tactical-accent text-xs">skyfall:explosion_distant</code>) randomly selects one of 4 uploaded explosion sound files (<code class="text-tactical-accent text-xs">explosion_blast1..4.ogg</code>) layered with deep seismic sub-bass rumble (<code class="text-tactical-accent text-xs">explosion_rumble.ogg</code>) and randomized pitch (0.88x – 1.12x) so no two explosions ever sound identical. Overlapping gunfire and reloads never clip.
+                    </p>
+                </div>
+            </section>
+
+            <!-- SECTION 12 -->
+            <section id="section-12" class="space-y-6 scroll-mt-24">
+                <div class="border-b border-tactical-border pb-4">
+                    <span class="text-xs font-mono text-tactical-accent font-bold tracking-wider uppercase">Section 12</span>
+                    <h2 class="text-2xl lg:text-3xl font-bold text-white mt-1">Category 9: How to Disable Settings Tutorial (Griefing, Fire, Fog, Shake)</h2>
+                </div>
+                <p class="text-tactical-muted leading-relaxed">
+                    You can customize or disable any destructive or visual feature in two ways:
+                </p>
+                
+                <div class="space-y-4">
+                    <div class="p-5 rounded-xl bg-tactical-surface border border-tactical-border space-y-2">
+                        <h3 class="font-semibold text-white">Method A: In-Game GUI Screen (Press <code class="text-tactical-accent font-mono">K</code>)</h3>
+                        <p class="text-sm text-tactical-muted">Open the SKYFALL Tactical Configuration Screen to toggle block damage, fire spread, camera shake (0%–100%), fog, presets, and audio instantly.</p>
+                    </div>
+
+                    <div class="p-5 rounded-xl bg-tactical-surface border border-tactical-border space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold text-white">Method B: Server/World Config File (<code class="text-tactical-accent text-xs">config/skyfall-common.toml</code>)</h3>
+                            <button class="copy-btn text-xs px-2.5 py-1.5 bg-tactical-bg hover:bg-tactical-hover border border-tactical-border rounded text-tactical-muted hover:text-white transition flex items-center gap-1.5" data-clipboard-target="#tomlConfig">
+                                <i class="fa-regular fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <div class="code-block p-4 rounded-lg font-mono text-xs text-tactical-muted overflow-x-auto leading-relaxed">
+                            <pre id="tomlConfig">enableBlockDestruction = true  # Set to false for Zero-Griefing Mode
+enableFireSpread = true        # Set to false to stop fire placement
+enableFlyingDebris = true      # Set to false to disable FallingBlock debris
+enableScorchedCraters = true   # Set to false to stop Blackstone/Magma rims
+enableKillstreakRewards = true # Set to false to disable automatic killstreaks
+explosionRadiusMultiplier = 1.0# Scales blast size (0.1 to 5.0)
+explosionDamageMultiplier = 1.0# Scales entity damage dealt</pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 13 -->
+            <section id="section-13" class="space-y-6 scroll-mt-24">
+                <div class="border-b border-tactical-border pb-4">
+                    <span class="text-xs font-mono text-tactical-accent font-bold tracking-wider uppercase">Section 13</span>
+                    <h2 class="text-2xl lg:text-3xl font-bold text-white mt-1">Category 10: Admin Commands & Hardware Performance Presets</h2>
+                </div>
+                <p class="text-tactical-muted leading-relaxed">
+                    Use these commands in chat or command blocks (requires OP permission level 2):
+                </p>
+                <div class="space-y-3">
+                    <div class="relative">
+                        <button class="copy-btn absolute top-3 right-3 text-xs px-2.5 py-1.5 bg-tactical-surface hover:bg-tactical-hover border border-tactical-border rounded text-tactical-muted hover:text-white transition flex items-center gap-1.5 z-10" data-clipboard-target="#cmdBlock">
+                            <i class="fa-regular fa-copy"></i> Copy
+                        </button>
+                        <div class="code-block p-4 rounded-xl font-mono text-xs text-tactical-accent overflow-x-auto leading-relaxed">
+                            <pre id="cmdBlock"># Summon any airstrike directly at coordinates:
+/skyfall strike &lt;PRECISION|CARPET|NAPALM|CLUSTER|BUNKER_BUSTER|ORBITAL_LASER|EMP|TACTICAL_NUKE&gt; &lt;x&gt; &lt;y&gt; &lt;z&gt;
+
+# Switch client particle/shader preset:
+/skyfall preset &lt;LOW|MEDIUM|HIGH|ULTRA&gt;
+
+# Toggle block damage or fire spread live without restarting:
+/skyfall config blockDamage false
+/skyfall config fireSpread false
+
+# Emergency lag clear — removes all active missiles, jets, drones, beams:
+/skyfall clear_active
+
+# View live diagnostics:
+/skyfall status</pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 14 -->
+            <section id="section-14" class="space-y-6 scroll-mt-24">
+                <div class="border-b border-tactical-border pb-4">
+                    <span class="text-xs font-mono text-tactical-accent font-bold tracking-wider uppercase">Section 14</span>
+                    <h2 class="text-2xl lg:text-3xl font-bold text-white mt-1">Category 11: Complete Registry Reference (All 36+ Items, 21 Entities, 30 Sounds)</h2>
+                </div>
+                <p class="text-tactical-muted leading-relaxed">
+                    Use <code class="text-tactical-accent font-mono text-sm">/give @p skyfall:&lt;item_id&gt;</code> to spawn any registered item:
+                </p>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Items Registry Table -->
+                    <div class="space-y-3">
+                        <h3 class="font-semibold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-box-archive text-tactical-accent"></i>
+                            All Registered Items (41 Total)
+                        </h3>
+                        <div class="overflow-x-auto rounded-xl border border-tactical-border max-h-96 overflow-y-auto">
+                            <table class="w-full text-left border-collapse table-custom text-xs">
+                               <thead>
+                                    <tr>
+                                        <th class="p-2.5 font-semibold">ID</th>
+                                        <th class="p-2.5 font-semibold">Item Name</th>
+                                    </tr>
+                               </thead>
+                               <tbody class="divide-y divide-tactical-border text-tactical-muted">
+                                    <tr><td class="p-2 font-mono text-tactical-accent">laser_designator</td><td class="p-2">AN/PEQ-18 Laser Designator</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">smoke_marker_grenade</td><td class="p-2">IR Smoke Marker Grenade</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">tactical_nuke_remote</td><td class="p-2">B61 Tactical Nuclear Detonator</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">orbital_laser_beacon</td><td class="p-2">Orbital Ion Cannon Beacon</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">emp_strike_remote</td><td class="p-2">High-Altitude EMP Detonator</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">f35_strike_beacon</td><td class="p-2">F-35 Wingman Strike Beacon</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">flare_gun</td><td class="p-2">Emergency Flare Gun</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">recon_drone_item</td><td class="p-2">RQ-11 Raven Recon UAV</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">tactical_smg</td><td class="p-2">Tactical SMG (.glb)</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">tactical_pistol</td><td class="p-2">Cyberpunk Pistol (.glb)</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">javelin_launcher</td><td class="p-2">FGM-148 Javelin Launcher (.glb)</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">rpg_launcher</td><td class="p-2">RPG-7 HD Launcher (.glb)</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">quad_launcher</td><td class="p-2">M202 Quad Launcher (.glb)</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">barrett_sniper</td><td class="p-2">Barrett M82 .50 Sniper</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">m4a1_rifle</td><td class="p-2">M4A1 Tactical Carbine</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">m134_minigun</td><td class="p-2">M134 6-Barrel Minigun</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">smg_ammo</td><td class="p-2">9mm SMG Magazine</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">pistol_ammo</td><td class="p-2">.45 ACP Pistol Magazine</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">rifle_ammo</td><td class="p-2">5.56mm NATO Magazine</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">sniper_ammo</td><td class="p-2">.50 BMG Sniper Magazine</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">minigun_ammo</td><td class="p-2">7.62mm Minigun Belt Box</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">rocket_ammo</td><td class="p-2">PG-7V HEAT Rocket</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">javelin_ammo</td><td class="p-2">Javelin Guided Missile Tube</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">quad_rocket_ammo</td><td class="p-2">M202 Incendiary Quad Clip</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">ac130_remote</td><td class="p-2">AC-130J Gunship Laptop</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">fpv_drone_item</td><td class="p-2">FPV Kamikaze Drone</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">reaper_drone_item</td><td class="p-2">MQ-9 Reaper Armed UAV</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">guided_missile_item</td><td class="p-2">Predator TV-Guided Missile</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">ciws_turret_item</td><td class="p-2">Phalanx CIWS 20mm Turret</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">sam_site_item</td><td class="p-2">MIM-104 Patriot SAM Battery</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">c4_explosive_item</td><td class="p-2">M112 Sticky C4 Charge</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">c4_detonator</td><td class="p-2">M57 C4 Clacker Detonator</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">supply_drop_flare</td><td class="p-2">C-130 Care Package Flare</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">nvg_goggles</td><td class="p-2">GPNVG-18 Panoramic NVG</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">radar_receiver_item</td><td class="p-2">AN/APR-39 RWR Radar</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">wheelson_item</td><td class="p-2">Wheelson UGV Tank Drone (v5.0)</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">juggernaut_suit_item</td><td class="p-2">Juggernaut Exosuit (v5.0)</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">vls_silo_item</td><td class="p-2">Mk-41 VLS Missile Silo (v5.0)</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">rods_from_god_item</td><td class="p-2">Rods from God Orbital Strike</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">b2_stealth_bomber_item</td><td class="p-2">B-2A Stealth Bomber V-Form</td></tr>
+                                    <tr><td class="p-2 font-mono text-tactical-accent">war_table_item</td><td class="p-2">Holographic War Table (v5.0)</td></tr>
+                               </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Entities & Sounds Summary -->
+                    <div class="space-y-6">
+                        <div class="space-y-3">
+                            <h3 class="font-semibold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-ghost text-tactical-accent"></i>
+                                Registered Entities (21 Total)
+                            </h3>
+                            <div class="p-4 rounded-xl bg-tactical-surface border border-tactical-border text-xs font-mono text-tactical-muted leading-relaxed">
+                                missile, fighter_jet, carpet_bomber, cluster_bomblet, flare_projectile, orbital_laser_beam, emp_blast, recon_drone, smoke_marker, bullet_projectile, ac130_gunship, fpv_drone, reaper_drone, tv_guided_missile, ciws_turret, sam_site, c4_charge, supply_drop, wheelson_ugv, vls_silo, rods_from_god, b2_stealth_bomber.
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <h3 class="font-semibold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-volume-high text-tactical-accent"></i>
+                                Studio Sound Events (30 Total)
+                            </h3>
+                            <div class="p-4 rounded-xl bg-tactical-surface border border-tactical-border text-xs text-tactical-muted leading-relaxed">
+                                Includes 4-way randomized impact explosions (<code class="text-tactical-accent font-mono">explosion_blast1..4.ogg</code>), seismic rumble (<code class="text-tactical-accent font-mono">explosion_rumble.ogg</code>), automatic gunfire pitch jitter, missile launches, AC-130 rotor hums, NVG hums, and nuclear sirens.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="border-t border-tactical-border pt-8 pb-16 text-center text-xs text-tactical-muted space-y-3">
+                <div class="flex items-center justify-center space-x-2">
+                    <span class="w-2 h-2 rounded-full bg-tactical-accent"></span>
+                    <span class="font-semibold text-white">SKYFALL Airstrike R 1.5.0</span>
+                </div>
+                <p>Minecraft Java Edition 1.20.1 • Forge 47.2.0 • Standalone Documentation</p>
+                <p class="text-tactical-muted/60">Call of Duty inspired tactical sandbox. All rights reserved.</p>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- Back to Top Floating Button -->
+    <button id="backToTop" class="fixed bottom-6 right-6 z-40 w-12 h-12 bg-tactical-surface border border-tactical-border hover:border-tactical-accent text-tactical-light rounded-full shadow-2xl flex items-center justify-center transition opacity-0 pointer-events-none hover:text-tactical-accent" aria-label="Back to Top">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
+    <!-- JavaScript for Interactivity, Search, Copy, and Mobile Drawer -->
+    <script>
+        // Mobile Sidebar Drawer Logic
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('-translate-x-full');
+            sidebarBackdrop.classList.toggle('hidden');
+        }
+
+        sidebarToggle.addEventListener('click', toggleSidebar);
+        sidebarBackdrop.addEventListener('click', toggleSidebar);
+
+        // Close sidebar when clicking links on mobile
+        document.querySelectorAll('#sidebarNav a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 1024) {
+                    toggleSidebar();
+                }
+            });
+        });
+
+        // Back to Top Button
+        const backToTopBtn = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 400) {
+                backToTopBtn.classList.remove('opacity-0', 'pointer-events-none');
+            } else {
+                backToTopBtn.classList.add('opacity-0', 'pointer-events-none');
+            }
+        });
+
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Copy to Clipboard Functionality
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetSelector = btn.getAttribute('data-clipboard-target');
+                const targetElement = document.querySelector(targetSelector);
+                if (targetElement) {
+                    const text = targetElement.innerText;
+                    // Use document.execCommand fallback / clipboard API
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(text).then(() => {
+                            showCopySuccess(btn);
+                        });
+                    } else {
+                        const textarea = document.createElement('textarea');
+                        textarea.value = text;
+                        document.body.appendChild(textarea);
+                        textarea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textarea);
+                        showCopySuccess(btn);
+                    }
+                }
+            });
+        });
+
+        function showCopySuccess(btn) {
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-check text-tactical-accent"></i> Copied!';
+            btn.classList.add('border-tactical-accent', 'text-tactical-accent');
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+                btn.classList.remove('border-tactical-accent', 'text-tactical-accent');
+            }, 2000);
+        }
+
+        // Live Real-Time Search Filter
+        const liveSearchInput = document.getElementById('liveSearch');
+        const mobileLiveSearchInput = document.getElementById('mobileLiveSearch');
+        const sections = document.querySelectorAll('main > section');
+
+        function performSearch(query) {
+            const q = query.toLowerCase().trim();
+            sections.forEach(sec => {
+                const text = sec.innerText.toLowerCase();
+                if (q === '' || text.includes(q)) {
+                    sec.style.display = '';
+                } else {
+                    sec.style.display = 'none';
+                }
+            });
+        }
+
+        if (liveSearchInput) {
+            liveSearchInput.addEventListener('input', (e) => performSearch(e.target.value));
+        }
+        if (mobileLiveSearchInput) {
+            mobileLiveSearchInput.addEventListener('input', (e) => performSearch(e.target.value));
+        }
+
+        // Keyboard shortcut '/' to focus search
+        window.addEventListener('keydown', (e) => {
+            if (e.key === '/' && document.activeElement !== liveSearchInput && document.activeElement !== mobileLiveSearchInput) {
+                e.preventDefault();
+                liveSearchInput.focus();
+            }
+        });
+
+        // Active Nav Link Highlighting on Scroll
+        const navLinks = document.querySelectorAll('.nav-link');
+        const observerOptions = {
+            root: null,
+            rootMargin: '-20% 0px -70% 0px',
+            threshold: 0
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+                    navLinks.forEach(link => {
+                        if (link.getAttribute('href') === `#${id}`) {
+                            link.classList.add('bg-tactical-accent/10', 'text-tactical-accent', 'border', 'border-tactical-accent/30');
+                            link.classList.remove('text-tactical-muted');
+                        } else {
+                            link.classList.remove('bg-tactical-accent/10', 'text-tactical-accent', 'border', 'border-tactical-accent/30');
+                            link.classList.add('text-tactical-muted');
+                        }
+                    });
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(sec => observer.observe(sec));
+    </script>
+</body>
+</html>
